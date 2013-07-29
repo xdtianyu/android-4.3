@@ -1,0 +1,7 @@
+# zygote
+type zygote, domain;
+type zygote_exec, exec_type, file_type;
+
+permissive zygote;
+init_daemon_domain(zygote)
+unconfined_domain(zygote)

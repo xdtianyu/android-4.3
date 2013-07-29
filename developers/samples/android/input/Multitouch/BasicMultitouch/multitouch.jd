@@ -1,0 +1,24 @@
+page.title=Multitouch Sample
+@jd:body
+
+<p>This samples demonstrates the use of <pre>MotionEvent</pre> properties to keep track of individual touches across multiple touch events.</p>
+
+<p>A <a href="http://developer.android.com/reference/android/view/MotionEvent.html">MotionEvent</a> describes a movement event.
+For touch events, they contain an action, X and Y coordinates and other relevant information. Multi-touch screens can report multiple movement traces at the same time, 
+reporting all active touches within a single <pre>MotionEvent</pre>.</p>
+
+<p>Each pointer has a unique id that is assigned when it first goes down
+ (indicated by <pre><a href="/reference/android/view/MotionEvent.html#ACTION_DOWN">ACTION_DOWN</a></pre> or <pre><a href="/reference/android/view/MotionEvent.html#ACTION_POINTER_DOWN">ACTION_POINTER_DOWN</a></pre>).  A pointer id
+ remains valid until the pointer eventually goes up (indicated by <pre><a href="/reference/android/view/MotionEvent.html#ACTION_UP">ACTION_UP</a></pre>
+ or <pre><a href="/reference/android/view/MotionEvent.html#ACTION_POINTER_UP">ACTION_POINTER_UP</a></pre>) or when the gesture is canceled (indicated by
+ <pre><a href="/reference/android/view/MotionEvent.html#ACTION_CANCEL">ACTION_CANCEL</a></pre>).
+ </p>
+ 
+<p>The sample shows how these pointer identifiers can be used over subsequent events to track individual fingers. 
+This is illustrated by a custom View that responds to touch events. Coloured circles are drawn for each finger, showing its current and past position on the screen.
+This example shows the relationship between <pre>MotionEvent</pre> indices, pointer identifiers and <pre>MotionEvent</pre> actions.</p>
+
+<p>For more information, see the relevant <a href="http://android-developers.blogspot.com.au/2010/06/making-sense-of-multitouch.html">blog post</a> and 
+<a href="http://developer.android.com/reference/android/view/MotionEvent.html"><pre>MotionEvent</pre></a> API documentation. </p> 
+
+<p><img src="images/MultitouchSample.png" /></p>

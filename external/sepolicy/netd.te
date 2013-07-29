@@ -1,0 +1,8 @@
+# network manager
+type netd, domain;
+type netd_exec, exec_type, file_type;
+
+permissive netd;
+unconfined_domain(netd)
+init_daemon_domain(netd)
+domain_auto_trans(netd, dhcp_exec, dhcp)

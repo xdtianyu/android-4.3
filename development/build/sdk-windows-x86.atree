@@ -1,0 +1,69 @@
+#
+# Copyright (C) 2011 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# These are the files that comprise the *Windows* SDK.
+#
+# The Windows SDK is based on the Linux one so in this file we
+# need to remove Linux binaries and replace them by their
+# Windows counterparts.
+#
+# This file only includes platform-dependent files.
+# Tools-dependent files (and not tied to a specific platform)
+# are controled by sdk/build/tools.windows.atree.
+#
+
+##############################################################################
+# Platform Tools Component
+##############################################################################
+
+rm platform-tools/adb
+rm platform-tools/fastboot
+bin/adb.exe                             strip platform-tools/adb.exe
+bin/fastboot.exe                        strip platform-tools/fastboot.exe
+bin/AdbWinUsbApi.dll                          platform-tools/AdbWinUsbApi.dll
+bin/AdbWinApi.dll                             platform-tools/AdbWinApi.dll
+
+
+##############################################################################
+# Build Tools Component
+##############################################################################
+
+rm build-tools/${PLATFORM_NAME}/aapt
+bin/aapt.exe                            strip build-tools/${PLATFORM_NAME}/aapt.exe
+
+rm build-tools/${PLATFORM_NAME}/aidl
+bin/aidl.exe                            strip build-tools/${PLATFORM_NAME}/aidl.exe
+
+rm build-tools/${PLATFORM_NAME}/dx
+dalvik/dx/etc/dx.bat                          build-tools/${PLATFORM_NAME}/dx.bat
+rm build-tools/${PLATFORM_NAME}/dexdump
+bin/dexdump.exe                         strip build-tools/${PLATFORM_NAME}/dexdump.exe
+
+rm build-tools/${PLATFORM_NAME}/llvm-rs-cc
+bin/llvm-rs-cc.exe                      strip build-tools/${PLATFORM_NAME}/llvm-rs-cc.exe
+
+
+
+##############################################################################
+# Docs Component
+##############################################################################
+
+external/sonivox/docs/JET_Authoring_Guidelines.html   docs/JetCreator/JET_Authoring_Guidelines.html
+external/sonivox/docs/JET_Authoring_Guidelines_files  docs/JetCreator/JET_Authoring_Guidelines_files
+external/sonivox/docs/JET_Creator_User_Manual.html    docs/JetCreator/JET_Creator_User_Manual.html
+external/sonivox/docs/JET_Creator_User_Manual_files   docs/JetCreator/JET_Creator_User_Manual_files
+

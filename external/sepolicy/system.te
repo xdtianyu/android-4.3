@@ -1,0 +1,11 @@
+type system_app, domain;
+permissive system_app;
+app_domain(system_app)
+unconfined_domain(system_app)
+
+type system, domain;
+permissive system;
+unconfined_domain(system);
+
+# Create a socket for receiving info from wpa.
+type_transition system wifi_data_file:sock_file system_wpa_socket;

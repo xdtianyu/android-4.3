@@ -1,0 +1,115 @@
+#!/bin/bash
+#
+# Ceres Solver - A fast non-linear least squares minimizer
+# Copyright 2012 Google Inc. All rights reserved.
+# http://code.google.com/p/ceres-solver/
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+# * Neither the name of Google Inc. nor the names of its contributors may be
+#   used to endorse or promote products derived from this software without
+#   specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Author: mierle@gmail.com (Keir Mierle)
+#
+# Note: you will need a fairly complete latex installation, along with
+# pygments, for this to work.
+
+if [ -z $1 ] ; then
+  echo 'usage: scripts/make_release <version>'
+  echo '       must be run from toplevel Ceres source directory'
+  exit 1
+fi
+
+TMP="/tmp/ceres-solver-$1"
+DOCS_TMP="/tmp/ceres-solver-docs-$1"
+VERSION=$(grep 'SET(CERES_VERSION' CMakeLists.txt | \
+          sed -e 's/SET(CERES_VERSION //' | \
+          sed -e 's/)//')
+ABI_VERSION=$(grep 'SET(CERES_ABI_VERSION' CMakeLists.txt | \
+              sed -e 's/SET(CERES_ABI_VERSION //' | \
+              sed -e 's/)//')
+VERSION_IN_HEADER=$(grep '#define CERES_VERSION' include/ceres/ceres.h | \
+                    sed -e 's/#define CERES_VERSION //')
+ABI_VERSION_IN_HEADER=$(grep '#define CERES_ABI_VERSION' \
+                              include/ceres/ceres.h | \
+                        sed -e 's/#define CERES_ABI_VERSION //')
+GIT_COMMIT=$(git log -1 HEAD |grep commit)
+
+if [[ $1 != $VERSION ]] ; then
+  echo "ERROR: Version from the command line $1 does not match CERES_VERSION"
+  echo "       in CMakeLists.txt, which is $VERSION. You may not be in the "
+  echo "       toplevel source dir."
+  exit 1
+fi
+
+if [[ $VERSION_IN_HEADER != $VERSION ]] ; then
+  echo "ERROR: CERES_VERSION version from include/ceres/ceres.h, which is"
+  echo "       $VERSION_IN_HEADER, does not match the ABI version"
+  echo "       from the toplevel CMakeLists.txt, which is $ABI_VERSION."
+  echo "       You may not be in the toplevel source directory, or the"
+  echo "       versions are out of sync."
+  exit 1
+fi
+
+if [[ $ABI_VERSION_IN_HEADER != $ABI_VERSION ]] ; then
+  echo "ERROR: CERES_ABI_VERSION from include/ceres/ceres.h, which is"
+  echo "       $ABI_VERSION_IN_HEADER, does not match the ABI version"
+  echo "       from the toplevel CMakeLists.txt, which is $ABI_VERSION."
+  echo "       You may not be in the toplevel source directory, or the"
+  echo "       versions are out of sync."
+  exit 1
+fi
+
+# Clone the repository and clean out the git extras.
+git clone . $TMP
+rm -rf "$TMP/.git"
+
+# Build the VERSION file.
+VERSIONFILE=$TMP/VERSION
+echo "version $VERSION" >> $VERSIONFILE
+echo "abi_version $VERSION" >> $VERSIONFILE
+echo "$GIT_COMMIT" >> $VERSIONFILE
+
+# Build the documentation.
+cp -pr "$TMP/docs" $DOCS_TMP
+cd $DOCS_TMP
+curl http://minted.googlecode.com/files/minted.sty > minted.sty
+pdflatex -shell-escape ceres-solver && \
+  bibtex ceres-solver && \
+  pdflatex -shell-escape ceres-solver && \
+  pdflatex -shell-escape ceres-solver
+cp $DOCS_TMP/ceres-solver.pdf "$TMP/docs/ceres-solver.pdf"
+cp $DOCS_TMP/ceres-solver.pdf "/tmp/ceres-solver-$1.pdf"
+
+# Build the tarball.
+cd /tmp
+tar -cvzf "ceres-solver-$1.tar.gz" "ceres-solver-$1"
+
+# Don't leave a mess behind.
+rm -rf $DOCS_TMP
+rm -rf $TMP
+
+# Reminder to upload.
+echo
+echo "TODO: upload /tmp/ceres-solver-$1.tar.gz"
+echo "TODO: upload /tmp/ceres-solver-$1.pdf"
+echo
