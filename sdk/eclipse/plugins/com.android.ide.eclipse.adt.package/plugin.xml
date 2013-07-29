@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            description="Android Developer Tools"
+            name="ADT">
+         <property
+            name="preferenceCustomization"
+            value="plugin_customization.ini" />
+         <property
+            name="appName"
+            value="ADT" />
+         <property
+            name="aboutImage"
+            value="adt-about.png">
+         </property>
+         <property
+            name="aboutText"
+            value="Android Developer Tools&#x0A;&#x0A;Build: {0}&#x0A;&#x0A;This product includes Eclipse Platform, JDT, CDT, EMF, GEF and WTP,&#x0A;all of which are Copyright (c) Eclipse contributors and others.&#x0A;Visit http://eclipse.org/&#x0A;&#x0A;Android Developer Tools are Copyright (c) The Android Open Source Project.&#x0A;Visit http://developer.android.com">
+         </property>
+         <property
+            name="startupProgressRect"
+            value="216,229,170,4" />
+         <property
+            name="startupMessageRect"
+            value="216,240,265,30" />
+         <property
+            name="startupForegroundColor"
+            value="999999" />
+         <property
+               name="windowImages"
+               value="icons/adt16.png,icons/adt32.png,icons/adt48.png">
+         </property>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro">
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            icon="icons/adt16.png"
+            id="org.eclipse.intro.minimal"
+            label="Android IDE"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.config">
+      <config
+            content="introcontent.xml"
+            id="org.eclipse.intro.minimal.config"
+            introId="org.eclipse.intro.minimal">
+         <presentation
+               home-page-id="root"
+               standby-page-id="standby">
+            <implementation
+                  kind="html">
+            </implementation>
+         </presentation>
+      </config>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro">
+      <introProductBinding
+            introId="org.eclipse.intro.minimal"
+            productId="com.android.ide.eclipse.adt.package.product">
+      </introProductBinding>
+   </extension>
+</plugin>
